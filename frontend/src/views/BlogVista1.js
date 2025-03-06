@@ -15,7 +15,9 @@ const BlogVista1 = () => {
 
   const fetchComentarios = async () => {
     try {
-      const response = await fetch("http://localhost:5000/comentarios");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/comentarios`
+      );
       const data = await response.json();
       setComentarios(data);
     } catch (error) {
@@ -73,7 +75,8 @@ const BlogVista1 = () => {
       <div className="contact-form-container">
         <h1>Cuentanos tu opinión</h1>
         <p>
-          Dejanos tus comentarios. Su dirección de correo electrónico no será publicada
+          Dejanos tus comentarios. Su dirección de correo electrónico no será
+          publicada
         </p>
         <form className="contact-form" onSubmit={handleSubmit}>
           <textarea

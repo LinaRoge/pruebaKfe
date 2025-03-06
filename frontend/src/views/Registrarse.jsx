@@ -1,20 +1,22 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './Registrarse.css';
-import Swal from 'sweetalert2';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./Registrarse.css";
+import Swal from "sweetalert2";
 
 function Register() {
-  const [nombre, setNombre] = useState('');
-  const [apellido, setApellido] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [telefono, setTelefono] = useState('');
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [telefono, setTelefono] = useState("");
   const navigate = useNavigate(); // Hook para redirección
 
   // Función para verificar si el email ya está registrado
   async function verificarCorreoExistente(email) {
     try {
-      const response = await fetch(`http://localhost:5000/verificar-email?email=${email}`);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/verificar-email?email=${email}`
+      );
       const data = await response.json();
       return data.existe; // true si el correo ya está en la base de datos
     } catch (error) {
@@ -28,14 +30,18 @@ function Register() {
 
     // Validar que la contraseña tenga al menos 6 caracteres
     if (password.length < 6) {
-      Swal.fire('Error', 'La contraseña debe tener al menos 6 caracteres', 'error');
+      Swal.fire(
+        "Error",
+        "La contraseña debe tener al menos 6 caracteres",
+        "error"
+      );
       return;
     }
 
     // Verificar si el email ya está registrado
     const emailExiste = await verificarCorreoExistente(email);
     if (emailExiste) {
-      Swal.fire('Error', 'El usuario ya está registrado', 'error');
+      Swal.fire("Error", "El usuario ya está registrado", "error");
       return;
     }
 
@@ -44,28 +50,32 @@ function Register() {
     myHeaders.append("Accept", "*/*");
 
     const raw = JSON.stringify({
-      "nombre": nombre,
-      "apellido": apellido,
-      "email": email,
-      "telefono": telefono,
-      "password": password
+      nombre: nombre,
+      apellido: apellido,
+      email: email,
+      telefono: telefono,
+      password: password,
     });
 
     const requestOptions = {
       method: "POST",
       headers: myHeaders,
       body: raw,
-      redirect: "follow"
+      redirect: "follow",
     };
 
     fetch("http://localhost:5000/registro", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.error) {
-          Swal.fire('Error', result.error, 'error');
+          Swal.fire("Error", result.error, "error");
         } else {
-          Swal.fire('¡Cuenta creada!', 'Tu cuenta fue creada con éxito.', 'success');
-          navigate('/login'); // Redirige tras el registro
+          Swal.fire(
+            "¡Cuenta creada!",
+            "Tu cuenta fue creada con éxito.",
+            "success"
+          );
+          navigate("/login"); // Redirige tras el registro
         }
       })
       .catch((error) => console.error("Error al registrar:", error));
@@ -138,7 +148,7 @@ function Register() {
             </button>
           </form>
           <p className="member-text">
-            Ya estás registrado?{' '}
+            Ya estás registrado?{" "}
             <Link to="/login" className="login-link">
               Iniciar Sesión
             </Link>

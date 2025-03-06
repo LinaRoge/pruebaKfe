@@ -12,7 +12,7 @@ const Contacto = () => {
     const newmensaje = { nombre, email, mensaje };
 
     try {
-      const response = await fetch("http:///localhost:5000/contacto", {
+      const response = await fetch("https://backendkfe.onrender.com/contacto", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
