@@ -17,11 +17,10 @@
     "web-vitals": "^4.2.4"
   },
   "scripts": {
-
+    "build": "react-scripts build",
     "start": "react-scripts start",
     "server": "react-scripts start",
     "client": "react-scripts start"
-
   },
   "eslintConfig": {
     "extends": [
