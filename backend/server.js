@@ -38,7 +38,7 @@ app.use(cookieParser());
 
 // Configuración de CORS
 const corsOptions = {
-  origin: "http://localhost:3000", // Permitir solicitudes desde localhost:3000 (frontend React)
+  origin: "https://frontendbakfe.onrender.com", // Permitir solicitudes desde localhost:3000 (frontend React)
   methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
   allowedHeaders: ["Content-Type"], // Permitir los encabezados que tu solicitud usa (como Content-Type)
 };
