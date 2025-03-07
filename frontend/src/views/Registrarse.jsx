@@ -15,7 +15,7 @@ function Register() {
   async function verificarCorreoExistente(email) {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/verificar-email?email=${email}`
+        `https://backendkfe.onrender.com/verificar-email?email=${email}`
       );
       const data = await response.json();
       return data.existe; // true si el correo ya está en la base de datos
@@ -64,7 +64,7 @@ function Register() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:5000/registro", requestOptions)
+    fetch("https://backendkfe.onrender.com/registro", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.error) {
