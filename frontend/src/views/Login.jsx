@@ -1,34 +1,33 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './Login.css';
-import Swal from 'sweetalert2';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios"; // Importar Axios
+import "./Login.css";
+import Swal from "sweetalert2";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await axios.post(`/login`, { email, password });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        Swal.fire('¡Bienvenido!', 'Has iniciado sesión correctamente.', 'success');
-        navigate('/'); // Redirigir a la página principal
-      } else {
-        Swal.fire('Error', data.error || 'Credenciales incorrectas.', 'error');
-      }
+      Swal.fire(
+        "¡Bienvenido!",
+        "Has iniciado sesión correctamente.",
+        "success"
+      );
+      navigate("/"); // Redirigir a la página principal
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-      Swal.fire('Error', 'Hubo un problema con el servidor.', 'error');
+      console.error("Error al iniciar sesión:", error);
+      Swal.fire(
+        "Error",
+        error.response?.data?.error || "Hubo un problema con el servidor.",
+        "error"
+      );
     }
   };
 
@@ -77,7 +76,7 @@ const Login = () => {
             </div>
           </form>
           <p className="member-text">
-            ¿No tienes cuenta?{' '}
+            ¿No tienes cuenta?{" "}
             <Link to="/registrarse" className="signup-link">
               Registrarse
             </Link>
