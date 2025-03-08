@@ -38,7 +38,7 @@ app.use(cookieParser());
 
 // Configuración de CORS
 const corsOptions = {
-  origin: "http://localhost:3000", // Permite solicitudes desde cualquier origen
+  origin: "https://frontendkfe.onrender.com", // Permite solicitudes desde cualquier origen
   methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
   allowedHeaders: ["Content-Type"], // Permitir los encabezados que tu solicitud usa (como Content-Type)
 };
