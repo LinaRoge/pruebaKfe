@@ -2,6 +2,7 @@
 
 require("dotenv").config();
 const { pool } = require("../coneccion/coneccion");
+const bcrypt = require("bcrypt");
 
 // Función para verificar si el correo ya está registrado
 const verificarCorreoExistente = async (email) => {
@@ -14,21 +15,22 @@ const verificarCorreoExistente = async (email) => {
   } catch (error) {
     console.error("Error al verificar correo:", error);
     throw error;
-   }
- };
-
+  }
+};
 
 // Función para registrar el usuario
 const registrarUsuario = async (datos) => {
+  // Cifrar la contraseña
+  // 10 es el número de salt rounds
   const { nombre, apellido, email, password, telefono } = datos;
-
+  const hashedPassword = await bcrypt.hash(password, 10);
   const consulta = `
     INSERT INTO usuarios (nombre, apellido, email, contraseña, telefono)
     VALUES ($1, $2, $3, $4, $5)
     RETURNING *;
   `;
 
-  const values = [nombre, apellido, email, password, telefono];
+  const values = [nombre, apellido, email, hashedPassword, telefono];
 
   try {
     const { rows } = await pool.query(consulta, values);

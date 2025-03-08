@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"; // Importar Axios
+import axios from "axios";
 import "./Login.css";
 import Swal from "sweetalert2";
 
@@ -11,16 +11,30 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log("Submitting form with:", { email, password });
 
     try {
-      const response = await axios.post(`/login`, { email, password });
+      const response = await axios.post("/login", { email, password });
+      console.log("Respuesta del servidor:", response);
 
-      Swal.fire(
-        "¡Bienvenido!",
-        "Has iniciado sesión correctamente.",
-        "success"
-      );
-      navigate("/"); // Redirigir a la página principal
+      if (response.data.token && response.data.user) {
+        console.log("Token recibido:", response.data.token);
+        console.log("Usuario recibido:", response.data.user);
+
+        // Guardar token y datos del usuario en localStorage
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+
+        // Redirigir al usuario
+        Swal.fire(
+          "¡Bienvenido!",
+          `Bienvenido, ${response.data.user.nombre}`,
+          "success"
+        );
+        navigate("/"); // Redirigir a la página principal
+      } else {
+        Swal.fire("Error", "Las credenciales son incorrectas", "error");
+      }
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       Swal.fire(
@@ -77,7 +91,7 @@ const Login = () => {
           </form>
           <p className="member-text">
             ¿No tienes cuenta?{" "}
-            <Link to="/registrarse" className="signup-link">
+            <Link to="/registro" className="signup-link">
               Registrarse
             </Link>
           </p>

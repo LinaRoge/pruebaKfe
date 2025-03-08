@@ -40,18 +40,54 @@
   color: white;
   width: 20%; /* Ancho ajustado a tu preferencia */
   text-align: center;
-
   font-size: 1.5rem;
   font-weight: bold;
   margin-top: 20px;
   margin-block-end: 20px;
-  margin-left: 60%; /* Desplaza el elemento 3em desde la izquierda */
-  text-align: center; /* Alinea el texto a la derecha dentro del contenedor */
+  margin-left: 60%; /* Desplaza el elemento desde la izquierda */
   border-radius: 8px; /* Agrega bordes redondeados */
+  justify-items: center; /* Centra el contenido horizontalmente */
+  align-items: center; /* Centra el contenido verticalmente */
+  padding: 20px;
+}
+
+.btn-pagar {
+  padding: 10px 20px;
+  background-color: #007bff; /* Color de fondo brillante */
+  color: white; /* Texto blanco */
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+  width: 200px; /* Ajuste de tamaño para hacerlo más visible */
+  text-align: center;
+}
+
+.btn-pagar:hover {
+  background-color: #0056b3; /* Color al pasar el mouse */
 }
 
 .producto-item img {
   width: 50px;
+  .btn-pagar {
+    padding: 10px 20px;
+    background-color: #007bff; /* Color de fondo brillante */
+    color: white; /* Texto blanco */
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    width: 200px; /* Ajuste de tamaño para hacerlo más visible */
+    text-align: center;
+  }
+
+  .btn-pagar:hover {
+    background-color: #0056b3; /* Color al pasar el mouse */
+  }
   margin-right: 10px;
 }
 

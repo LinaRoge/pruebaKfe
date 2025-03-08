@@ -1,4 +1,4 @@
-//server.js
+///server.js
 // Importamos las dependencias necesarias para nuestra aplicación
 const express = require("express");
 const morgan = require("morgan");
@@ -16,8 +16,7 @@ const { insertarProducto } = require("./consultas/insertarProducto");
 const eliminarProducto = require("./consultas/eliminarProducto");
 const modificarProducto = require("./consultas/modificarProducto");
 const obtenerDatosPersonales = require("./consultas/obtenerDatosPersonales");
-const cambiarDatosPersonales = require("./consultas/cambiarDatosPersonales");
-const obtenerVentas = require("./consultas/obtenerVentas");
+
 const {
   registrarUsuario,
   verificarCorreoExistente,
@@ -25,8 +24,8 @@ const {
 const getUsuarioById = require("./consultas/getUsuarioById");
 const iniciarSesion = require("./consultas/iniciarSesion");
 
-require("dotenv").config();
-
+require("dotenv").config(); // Cargamos las variables de entorno desde el archivo .env
+const router = express.Router();
 const app = express();
 const PORT = process.env.PORT_SERVER || 5000;
 
@@ -39,7 +38,7 @@ app.use(cookieParser());
 
 // Configuración de CORS
 const corsOptions = {
-  origin: "*", // Permite solicitudes desde cualquier origen
+  origin: "http://localhost:3000", // Permite solicitudes desde cualquier origen
   methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
   allowedHeaders: ["Content-Type"], // Permitir los encabezados que tu solicitud usa (como Content-Type)
 };
@@ -63,6 +62,7 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+//DEFINICIÓN DE RUTAS
 // Ruta de bienvenida
 app.get("/", (req, res) => {
   res.json({
@@ -107,8 +107,6 @@ app.post(
   }
 );
 
-// RUTA LOGIN PARA USUARIOS
-
 // Ruta de inicio de sesión
 app.post(
   "/login",
@@ -127,13 +125,15 @@ app.post(
     }
 
     const { email, password } = req.body;
+    // RUTAS PARA CERRAR SESIÓN  --------------------------
+    app.post("/logout");
 
     try {
       // Llamar a la función de iniciar sesión y obtener el token
-      const token = await iniciarSesion({ email, password });
+      const { token, usuario } = await iniciarSesion({ email, password });
 
-      // Responder con el token generado
-      res.status(200).json({ token });
+      // Responder con el token y usuario generado
+      res.status(200).json({ token, user: usuario });
     } catch (error) {
       // En caso de error (usuario no encontrado o contraseña incorrecta)
       res.status(401).json({ error: error.message });
@@ -142,23 +142,6 @@ app.post(
 );
 
 // app.post(
-//   "/login",
-//   [body("email").isEmail(), body("password").isString().isLength({ min: 6 })],
-//   async (req, res) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
-//     try {
-//       const token = await iniciarSesion(req.body);
-//       res.status(200).json({ token });
-//     } catch (error) {
-//       console.error("Error en el inicio de sesión:", error.message);
-//       res.status(401).json({ error: "Credenciales incorrectas" });
-//     }
-//   }
-// );
-
 // RUTA PARA PRODUCTOS
 app.get("/productos", async (req, res) => {
   try {

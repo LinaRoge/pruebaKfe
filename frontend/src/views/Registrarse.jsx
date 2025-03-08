@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Registrarse.css";
+import axios from "axios"; // Utilizando axios para las peticiones
 import Swal from "sweetalert2";
 
 function Register() {
@@ -14,11 +15,8 @@ function Register() {
   // Función para verificar si el email ya está registrado
   async function verificarCorreoExistente(email) {
     try {
-      const response = await fetch(
-        `https://backendkfe.onrender.com/verificar-email?email=${email}`
-      );
-      const data = await response.json();
-      return data.existe; // true si el correo ya está en la base de datos
+      const response = await axios.get(`/verificar-email?email=${email}`);
+      return response.data.existe; // true si el correo ya está en la base de datos
     } catch (error) {
       console.error("Error al verificar el correo:", error);
       return false; // En caso de error, permitir el registro
@@ -45,40 +43,33 @@ function Register() {
       return;
     }
 
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Accept", "*/*");
-
-    const raw = JSON.stringify({
-      nombre: nombre,
-      apellido: apellido,
-      email: email,
-      telefono: telefono,
-      password: password,
-    });
-
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
+    const userData = {
+      nombre,
+      apellido,
+      email,
+      telefono,
+      password,
     };
 
-    fetch("https://backendkfe.onrender.com/registro", requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.error) {
-          Swal.fire("Error", result.error, "error");
-        } else {
-          Swal.fire(
-            "¡Cuenta creada!",
-            "Tu cuenta fue creada con éxito.",
-            "success"
-          );
-          navigate("/login"); // Redirige tras el registro
-        }
-      })
-      .catch((error) => console.error("Error al registrar:", error));
+    try {
+      const response = await axios.post("/registro", userData, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.data.error) {
+        Swal.fire("Error", response.data.error, "error");
+      } else {
+        Swal.fire(
+          "¡Cuenta creada!",
+          "Tu cuenta fue creada con éxito.",
+          "success"
+        );
+        navigate("/login"); // Redirige tras el registro
+      }
+    } catch (error) {
+      console.error("Error al registrar:", error);
+      Swal.fire("Error", "Hubo un problema al registrar la cuenta", "error");
+    }
   }
 
   return (
