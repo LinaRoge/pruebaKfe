@@ -17,7 +17,6 @@ import { DetallePago } from "./views/DetallePago";
 import BlogVista3 from "./views/BlogVista3";
 import "./App.css";
 import Carrito from "./views/Carrito";
-import CerrarSesion from "./views/CerrarSesion";
 
 function App() {
   return (
@@ -37,7 +36,6 @@ function App() {
         <Route path="/vista3" element={<BlogVista3 />} />
         <Route path="/carrito" element={<Carrito />} />
         <Route path="/DetallePago" element={<DetallePago />} />
-        <Route path="/cerrarsesion" element={<CerrarSesion />} />
       </Routes>
       <Footer />
     </div>
