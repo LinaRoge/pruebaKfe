@@ -50,37 +50,57 @@ Para ejecutar este proyecto en tu máquina local, sigue estos pasos:
    ```bash
    npm start
    ```
-Estructura del Proyecto:
+## Estructura del Proyecto
 
-/backend:
-Contiene el servidor API desarrollado con Express y que se conecta a una base de datos PostgreSQL.
-Crea un archivo .env en el directorio /backend con las siguientes variables:
-REACT_APP_API_URL=http://tu_url_backend
+- **/backend:**  
+  Contiene el servidor API desarrollado con Express, que se conecta a una base de datos PostgreSQL.
 
-/frontend:
-Contiene la aplicación web en React (Vite) que consume la API.
-Crea un archivo .env en el directorio /backend con las siguientes variables:
+- **/frontend:**  
+  Contiene la aplicación web en React (Vite) que consume la API.
 
-DB_HOST="Nombre_de_tu_localhost"
+---
+
+## Variables de Entorno
+
+### Backend
+
+Crea un archivo `.env` en el directorio `/backend` con las siguientes variables:
+
+```env
+DB_HOST="dpg-cv5ee3ofnakc73es1ao0-a.oregon-postgres.render.com"
 DB_DATABASE="bazar_k_fe"
-DB_USER="Tu_usuario_de_BD"
-DB_PASSWORD="Tu_clave_de_BD"
+DB_USER="bazar_k_fe_user"
+DB_PASSWORD="MOIxvkSfkw58Acoj6fU9bGHBqYsMehHD"
 SECRET_JWT_KEY="tu_clave_secreta"
-PORT=5432  
+PORT=5000  # Render inyecta la variable PORT automáticamente
+```
 
-Nota:
+**Nota:**  
 En la configuración de conexión a PostgreSQL, se recomienda usar SSL de la siguiente forma para Render:
 
+```js
 ssl: { rejectUnauthorized: false }
 
+```
+### Frontend
 
+Crea un archivo `.env` en el directorio `/frontend` con la siguiente variable:
+
+```env
+VITE_API_URL=https://TU:URL_BACKEND
 DESPLIEGUE
-Desplegar el Backend en Render
-Tipo de Servicio: Web Service.
-Directorio Raíz: backend
-Build Command: npm install
-(No es necesario ejecutar un build si el backend es solo Node.js).
-Start Command: npm start
-Variables de Entorno: Configura las variables de entorno (DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD, SECRET_JWT_KEY) en el panel de Render.
+```
+### Backend
 
+Crea un archivo `.env` en el directorio `/backend` con las siguientes variables:
+
+```env
+DB_HOST="NOMBRE_DE_TU_HOST"
+DB_NAME="bazar_k_fe"
+DB_USER="USUARIO_DE_TU_BD"
+DB_PASSWORD="TU_CLAVE_DE_BD"
+DB_PORT=5432
+SECRET_JWT_KEY="TU_CLAVE_SECRETA"
+  
+```
 
