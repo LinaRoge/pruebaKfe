@@ -38,7 +38,7 @@ Para ejecutar este proyecto en tu máquina local, sigue estos pasos:
 1. Clona el repositorio:
    ```bash
    git clone [https://github.com/LinaRoge/pruebaKfe]
-   cd vive_outdoors
+   cd bazar_k_fe
    ```
 
 2. Instala las dependencias:
