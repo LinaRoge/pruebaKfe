@@ -6,7 +6,7 @@ Bienvenido al repositorio de **DESAFIOLATAM BAZAR K-FÉ**. https://frontendkfe.o
 
 **DESAFIOLATAM CAFÉ** es un proyecto orientado a la elaboración de una tienda ecommerce de productos de café.
 
-##Integrantes
+## Integrantes
 
 - Bernardo Gaete
 - Juan Carlos Orellana
