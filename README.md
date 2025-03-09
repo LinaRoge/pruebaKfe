@@ -67,7 +67,7 @@ Para ejecutar este proyecto en tu máquina local, sigue estos pasos:
 Crea un archivo `.env` en el directorio `/backend` con las siguientes variables:
 
 ```env
-DB_HOST="dpg-cv5ee3ofnakc73es1ao0-a.oregon-postgres.render.com"
+DB_HOST="NOMBRE_DE_TU_HOST"
 DB_USER="TU_USUARIO_BD"
 DB_PASSWORD="TU_CLAVE_BD"
 DB_NAME="bazarkfe"
@@ -90,17 +90,5 @@ Crea un archivo `.env` en el directorio `/frontend` con la siguiente variable:
 VITE_API_URL=https://TU:URL_BACKEND
 DESPLIEGUE
 ```
-### Backend
 
-Crea un archivo `.env` en el directorio `/backend` con las siguientes variables:
-
-```env
-DB_HOST="NOMBRE_DE_TU_HOST"
-DB_NAME="bazar_k_fe"
-DB_USER="USUARIO_DE_TU_BD"
-DB_PASSWORD="TU_CLAVE_DE_BD"
-DB_PORT=5432
-SECRET_JWT_KEY="TU_CLAVE_SECRETA"
-  
-```
 
