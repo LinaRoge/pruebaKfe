@@ -123,6 +123,99 @@
 
 //VERSION N°02 del NAVBAR:
 
+// import React, { useContext } from "react";
+// import { Link } from "react-router-dom";
+// import "./Navbar.css";
+// import { FaShoppingCart } from "react-icons/fa";
+// import { kfeContext } from "../context/AppProvider";
+// import { AuthContext } from "../context/AuthContext";
+
+// const Navbar = () => {
+//   const { totalAPagar } = useContext(kfeContext);
+//   const { usuario, logout } = useContext(AuthContext);
+
+//   const cerrarSesion = () => {
+//     logout(); // Esta función debe remover el usuario del contexto y limpiar localStorage
+//   };
+
+//   return (
+//     <nav className="navbar">
+//       <div className="navbar-left">
+//         <div className="logo">
+//           <Link to="/">
+//             <img src="/images/logo1.jpg" alt="Logo" className="logo-img" />
+//           </Link>
+//         </div>
+//         <ul className="nav-links">
+//           <li>
+//             <Link to="/" style={{ textDecoration: "none", color: "white" }}>
+//               Inicio
+//             </Link>
+//           </li>
+//           <li>
+//             <Link to="/productos" style={{ textDecoration: "none", color: "white" }}>
+//               Productos
+//             </Link>
+//           </li>
+
+//           {usuario ? (
+//             <>
+//               <li>
+//                 <span style={{ color: "white", fontWeight: "bold" }}>
+//                   Bienvenido, {usuario.nombre} {usuario.apellido} 👋
+//                 </span>
+//               </li>
+//               <li>
+//                 <button onClick={cerrarSesion} className="btn-logout">
+//                   Cerrar sesión
+//                 </button>
+//               </li>
+//             </>
+//           ) : (
+//             <>
+//               <li>
+//                 <Link to="/login" style={{ textDecoration: "none", color: "white" }}>
+//                   Login
+//                 </Link>
+//               </li>
+//               <li>
+              
+//               </li>
+//               <li>
+//                 <Link to="/registrar2" style={{ textDecoration: "none", color: "white" }}>
+//                   Registrarse
+//                 </Link>
+//               </li>
+//             </>
+//           )}
+
+//           <li>
+//             <Link to="/contacto" style={{ textDecoration: "none", color: "white" }}>
+//               Contacto
+//             </Link>
+//           </li>
+//           <li>
+//             <Link to="/blog" style={{ textDecoration: "none", color: "white" }}>
+//               Blog
+//             </Link>
+//           </li>
+//         </ul>
+//       </div>
+//       <div className="navbar-right">
+//         <Link to="/carrito" className="my-1 mb-0">
+//           <p className="mb-0" style={{ color: "white" }}>
+//             <FaShoppingCart size={30} /> ${totalAPagar}
+//           </p>
+//         </Link>
+//       </div>
+//     </nav>
+//   );
+// };
+
+// export default Navbar;
+
+//VERSION N°03 DEL NAVBAR (se mueve el mensaje de bienvenida hacia el lado del carrito)
+
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
@@ -135,7 +228,7 @@ const Navbar = () => {
   const { usuario, logout } = useContext(AuthContext);
 
   const cerrarSesion = () => {
-    logout(); // Esta función debe remover el usuario del contexto y limpiar localStorage
+    logout(); // Remueve el usuario del contexto y limpia localStorage
   };
 
   return (
@@ -157,40 +250,6 @@ const Navbar = () => {
               Productos
             </Link>
           </li>
-
-          {usuario ? (
-            <>
-              <li>
-                <span style={{ color: "white", fontWeight: "bold" }}>
-                  Bienvenido, {usuario.nombre} {usuario.apellido} 👋
-                </span>
-              </li>
-              <li>
-                <button onClick={cerrarSesion} className="btn-logout">
-                  Cerrar sesión
-                </button>
-              </li>
-            </>
-          ) : (
-            <>
-              <li>
-                <Link to="/login" style={{ textDecoration: "none", color: "white" }}>
-                  Login
-                </Link>
-              </li>
-              <li>
-                <Link to="/registrarse" style={{ textDecoration: "none", color: "white" }}>
-                  Registrarse
-                </Link>
-              </li>
-              <li>
-                <Link to="/registrar2" style={{ textDecoration: "none", color: "white" }}>
-                  Registrarse2
-                </Link>
-              </li>
-            </>
-          )}
-
           <li>
             <Link to="/contacto" style={{ textDecoration: "none", color: "white" }}>
               Contacto
@@ -203,8 +262,29 @@ const Navbar = () => {
           </li>
         </ul>
       </div>
+
       <div className="navbar-right">
-        <Link to="/carrito" className="my-1 mb-0">
+        {usuario ? (
+          <>
+            <span style={{ color: "white", fontWeight: "bold", marginRight: "10px" }}>
+              Bienvenido, {usuario.nombre} {usuario.apellido} 👋
+            </span>
+            <button onClick={cerrarSesion} className="btn-logout">
+              Cerrar sesión
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" style={{ textDecoration: "none", color: "white", marginRight: "10px" }}>
+              Login
+            </Link>
+            <Link to="/registrar2" style={{ textDecoration: "none", color: "white" }}>
+              Registrarse
+            </Link>
+          </>
+        )}
+
+        <Link to="/carrito" className="my-1 mb-0" style={{ marginLeft: "15px" }}>
           <p className="mb-0" style={{ color: "white" }}>
             <FaShoppingCart size={30} /> ${totalAPagar}
           </p>
@@ -215,4 +295,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 
