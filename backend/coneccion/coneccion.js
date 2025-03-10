@@ -10,10 +10,20 @@ const pool = new Pool({
   host: DB_HOST || "localhost", // Por defecto se usa localhost si no está definida
   database: DB_NAME || "bazarkfe", // Nombre de la base de datos
   user: DB_USER || "postgres", // Usuario de la base de datos
-  password: DB_PASSWORD || "TU_CLAVE", // Contraseña de la base de datos
+  password: DB_PASSWORD || "497813", // Contraseña de la base de datos
   port: DB_PORT || 5432, // Puerto de la base de datos (por defecto 5432)
   allowExitOnIdle: true, // Permite que la aplicación se cierre incluso si hay conexiones inactivas
   ssl: false,
 });
+
+// Intentar conectarse a la base de datos y mostrar un mensaje en consola
+pool
+  .connect()
+  .then(() => {
+    console.log("Conectado exitosamente a la base de datos");
+  })
+  .catch((err) => {
+    console.error("Error al conectar a la base de datos:", err.message);
+  });
 
 module.exports = { pool };

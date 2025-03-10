@@ -1,76 +1,136 @@
-///server.js
-// Importamos las dependencias necesarias para nuestra aplicación
+// ///server.js
+
+// const express = require("express");
+// const bcrypt = require("bcryptjs");
+// const { pool } = require("./coneccion/coneccion"); // Ajusta la ruta según tu estructura
+// const { body, validationResult } = require("express-validator"); // Importar express-validator para validación
+// const app = express();
+// const PORT = process.env.PORT_SERVER || 5000;
+// const cors = require('cors');
+
+// // Función para verificar si el correo ya existe
+// const verificarCorreoExistente = async (email) => {
+//   try {
+//     const result = await pool.query("SELECT * FROM usuarios WHERE email = $1", [email]);
+//     return result.rows.length > 0;  // Devuelve true si el correo existe, false si no
+//   } catch (error) {
+//     console.error("Error al verificar correo:", error);
+//     throw new Error("Error al verificar el correo");
+//   }
+// };
+
+// // Registrar usuario
+// const registrarUsuario = async ({ nombre, apellido, email, contraseña, telefono }) => {
+//   try {
+//     const result = await pool.query(
+//       "INSERT INTO usuarios (nombre, apellido, email, contraseña, telefono) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+//       [nombre, apellido, email, contraseña, telefono]
+//     );
+//     return result.rows[0]; // Devuelve el usuario registrado
+//   } catch (error) {
+//     console.error("Error al registrar usuario:", error.message);
+//     throw new Error("Error al registrar usuario");
+//   }
+// };
+
+// // Middleware para parsear JSON
+// app.use(express.json());
+
+// //CORS para todas las solicitudes
+
+// app.use(cors());
+
+// // Ruta POST /registro para registrar nuevos usuarios
+// app.post(
+//   "/registro",
+//   [
+//     body("nombre").isString().notEmpty(),
+//     body("apellido").isString().notEmpty(),
+//     body("email").isEmail(),
+//     body("telefono").isString().notEmpty(),
+//     body("contraseña").isString().isLength({ min: 6 }),
+//   ],
+//   async (req, res) => {
+//     // Validar los datos
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({ errors: errors.array() });
+//     }
+
+//     const { nombre, apellido, email, contraseña, telefono } = req.body;
+
+//     try {
+//       // Verificar si el correo ya está registrado
+//       const usuarioExistente = await verificarCorreoExistente(email);
+//       if (usuarioExistente) {
+//         return res.status(400).json({ error: "El correo electrónico ya está registrado" });
+//       }
+
+//       // Encriptar la contraseña
+//       const salt = await bcrypt.genSalt(10);
+//       const passwordEncriptada = await bcrypt.hash(contraseña, salt);
+
+//       // Registrar usuario si no existe
+//       const usuarioRegistrado = await registrarUsuario({
+//         nombre,
+//         apellido,
+//         email,
+//         contraseña: passwordEncriptada,
+//         telefono,
+//       });
+
+//       res.status(201).json({ message: "Usuario registrado correctamente", usuario: usuarioRegistrado });
+//     } catch (error) {
+//       console.error("Error en el registro:", error.message);
+//       res.status(500).json({ error: "Error en el registro" });
+//     }
+//   }
+// );
+
+// // Iniciar servidor
+// app.listen(PORT, () => {
+//   console.log(`Servidor corriendo en el puerto ${PORT}`);
+// });
+
 const express = require("express");
-const morgan = require("morgan");
+const bcrypt = require("bcryptjs");
 const cors = require("cors");
-const { pool } = require("./coneccion/coneccion"); // Aquí se importa el pool de conexión
-const cookieParser = require("cookie-parser");
-const helmet = require("helmet");
-const jwt = require("jsonwebtoken");
-const { body, validationResult, param } = require("express-validator");
-
-// Importamos funciones necesarias para las rutas
-const getProductos = require("./consultas/getProductos");
-const getProductoById = require("./consultas/getProductoById");
-const { insertarProducto } = require("./consultas/insertarProducto");
-const eliminarProducto = require("./consultas/eliminarProducto");
-const modificarProducto = require("./consultas/modificarProducto");
-const obtenerDatosPersonales = require("./consultas/obtenerDatosPersonales");
-
-const {
-  registrarUsuario,
-  verificarCorreoExistente,
-} = require("./consultas/registrarUsuario");
-const getUsuarioById = require("./consultas/getUsuarioById");
-const iniciarSesion = require("./consultas/iniciarSesion");
-
-require("dotenv").config(); // Cargamos las variables de entorno desde el archivo .env
-const router = express.Router();
+const { pool } = require("./coneccion/coneccion"); // Ajusta la ruta según tu estructura
+const { body, validationResult } = require("express-validator"); // Importar express-validator para validación
+const { iniciarSesion } = require("./consultas/iniciarSesion"); // Importar la función de inicio de sesión
 const app = express();
 const PORT = process.env.PORT_SERVER || 5000;
 
-// Middlewares
-app.use(cors());
-app.use(morgan("dev"));
-app.use(helmet());
+// Middleware para parsear JSON y habilitar CORS
 app.use(express.json());
-app.use(cookieParser());
+app.use(cors());
 
-// Configuración de CORS
-const corsOptions = {
-  origin: "https://frontendkfe.onrender.com", // Permite solicitudes desde cualquier origen
-  methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
-  allowedHeaders: ["Content-Type"], // Permitir los encabezados que tu solicitud usa (como Content-Type)
-};
-
-app.use(cors(corsOptions)); // Usar cors para todas las rutas
-
-// Middleware para verificar el token
-const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) {
-    return res
-      .status(403)
-      .json({ message: "Acceso denegado, no hay token de autenticación." });
-  }
+// Función para verificar si el correo ya existe
+const verificarCorreoExistente = async (email) => {
   try {
-    const decoded = jwt.verify(token, process.env.SECRET_JWT_KEY);
-    req.user = decoded;
-    next();
+    const result = await pool.query("SELECT * FROM usuarios WHERE email = $1", [email]);
+    return result.rows.length > 0; // Devuelve true si el correo existe, false si no
   } catch (error) {
-    return res.status(401).json({ message: "Token no válido o expirado" });
+    console.error("Error al verificar correo:", error);
+    throw new Error("Error al verificar el correo");
   }
 };
 
-//DEFINICIÓN DE RUTAS
-// Ruta de bienvenida
-app.get("/", (req, res) => {
-  res.json({
-    mensaje: "¡Bienvenidos! Esperamos que disfrutes tu experiencia.",
-  });
-});
+// Registrar usuario
+const registrarUsuario = async ({ nombre, apellido, email, contraseña, telefono }) => {
+  try {
+    const result = await pool.query(
+      "INSERT INTO usuarios (nombre, apellido, email, contraseña, telefono) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [nombre, apellido, email, contraseña, telefono]
+    );
+    return result.rows[0]; // Devuelve el usuario registrado
+  } catch (error) {
+    console.error("Error al registrar usuario:", error.message);
+    throw new Error("Error al registrar usuario");
+  }
+};
 
-// RUTA PARA REGISTRO DE NUEVOS USUARIOS
+// Ruta POST /registro para registrar nuevos usuarios
 app.post(
   "/registro",
   [
@@ -78,44 +138,7 @@ app.post(
     body("apellido").isString().notEmpty(),
     body("email").isEmail(),
     body("telefono").isString().notEmpty(),
-    body("password").isString().isLength({ min: 6 }),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { email } = req.body;
-
-    try {
-      // Verificar si el correo ya está registrado
-      const usuarioExistente = await verificarCorreoExistente(email);
-      if (usuarioExistente) {
-        return res
-          .status(400)
-          .json({ error: "El correo electrónico ya está registrado" });
-      }
-
-      // Si el correo no está registrado, proceder con el registro
-      await registrarUsuario(req.body);
-      res.status(201).json({ message: "Usuario registrado con éxito" });
-    } catch (error) {
-      console.error("Error al registrar usuario:", error.message);
-      res.status(500).json({ error: "Error en el registro" });
-    }
-  }
-);
-
-// Ruta de inicio de sesión
-app.post(
-  "/login",
-  [
-    body("email").isEmail().withMessage("El email no es válido"),
-    body("password")
-      .isString()
-      .isLength({ min: 6 })
-      .withMessage("La contraseña debe tener al menos 6 caracteres"),
+    body("contraseña").isString().isLength({ min: 6 }),
   ],
   async (req, res) => {
     // Validar los datos
@@ -124,183 +147,90 @@ app.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { email, password } = req.body;
-    // RUTAS PARA CERRAR SESIÓN  --------------------------
-    app.post("/logout");
+    const { nombre, apellido, email, contraseña, telefono } = req.body;
 
     try {
-      // Llamar a la función de iniciar sesión y obtener el token
-      const { token, usuario } = await iniciarSesion({ email, password });
+      // Verificar si el correo ya está registrado
+      const usuarioExistente = await verificarCorreoExistente(email);
+      if (usuarioExistente) {
+        return res.status(400).json({ error: "El correo electrónico ya está registrado" });
+      }
 
-      // Responder con el token y usuario generado
-      res.status(200).json({ token, user: usuario });
+      // Encriptar la contraseña
+      const salt = await bcrypt.genSalt(10);
+      const passwordEncriptada = await bcrypt.hash(contraseña, salt);
+
+      // Registrar usuario si no existe
+      const usuarioRegistrado = await registrarUsuario({
+        nombre,
+        apellido,
+        email,
+        contraseña: passwordEncriptada,
+        telefono,
+      });
+
+      res.status(201).json({ message: "Usuario registrado correctamente", usuario: usuarioRegistrado });
     } catch (error) {
-      // En caso de error (usuario no encontrado o contraseña incorrecta)
+      console.error("Error en el registro:", error.message);
+      res.status(500).json({ error: "Error en el registro" });
+    }
+  }
+);
+
+// Ruta POST /login para iniciar sesión
+app.post(
+  "/login",
+  [body("email").isEmail(), body("contraseña").isString().notEmpty()],
+  async (req, res) => {
+    // Validar los datos de entrada
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, contraseña } = req.body;
+
+    try {
+      const usuario = await iniciarSesion({ email, contraseña });
+      res.status(200).json({ message: "Inicio de sesión exitoso", usuario });
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error.message);
       res.status(401).json({ error: error.message });
     }
   }
 );
 
-// app.post(
-// RUTA PARA PRODUCTOS
-app.get("/productos", async (req, res) => {
-  try {
-    const productos = await getProductos();
-    res.json(productos);
-  } catch (error) {
-    res.status(500).json({ error: "Error al obtener productos" });
-  }
-});
+//FORMULARIO DE CONTACTO
 
-// RUTA PARA PRODUCTO POR ID
-app.get(
-  "/productos/:id",
-  param("id").isInt().withMessage("El ID debe ser un número entero"),
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    try {
-      const producto = await getProductoById(req.params.id);
-      if (!producto) {
-        return res.status(404).json({ error: "Producto no encontrado" });
-      }
-      res.json(producto);
-    } catch (error) {
-      res.status(500).json({ error: "Error al obtener el producto" });
-    }
-  }
-);
-
-// RUTA PARA INSERTAR UN NUEVO PRODUCTO
-app.post("/productos", async (req, res) => {
-  const {
-    nombre,
-    descripcion,
-    precio,
-    stock,
-    imagen,
-    id_categoria,
-    intensidad,
-    origen,
-  } = req.body;
-
-  try {
-    const nuevoProducto = await insertarProducto(
-      nombre,
-      descripcion,
-      precio,
-      stock,
-      imagen,
-      id_categoria,
-      intensidad,
-      origen
-    );
-
-    res.status(201).json({
-      message: "Producto insertado con éxito",
-      producto: nuevoProducto,
-    });
-  } catch (error) {
-    console.error("Error al insertar producto:", error.message);
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// RUTA PARA ELIMINAR UN PRODUCTO
-app.delete("/productos/:id", async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const productoEliminado = await eliminarProducto(id);
-
-    if (!productoEliminado) {
-      return res.status(404).json({ error: "Producto no encontrado" });
-    }
-
-    res.status(200).json({ message: "Producto eliminado con éxito" });
-  } catch (error) {
-    console.error("Error al eliminar producto:", error.message);
-    res.status(500).json({ error: "Error al eliminar el producto" });
-  }
-});
-
-// RUTA PARA MODIFICAR UN PRODUCTO
-app.put("/productos/:id", async (req, res) => {
-  const { id } = req.params;
-  const {
-    nombre,
-    descripcion,
-    precio,
-    stock,
-    imagen,
-    id_categoria,
-    intensidad,
-    origen,
-  } = req.body;
-
-  try {
-    const productoModificado = await modificarProducto(
-      id,
-      nombre,
-      descripcion,
-      precio,
-      stock,
-      imagen,
-      id_categoria,
-      intensidad,
-      origen
-    );
-
-    if (!productoModificado) {
-      return res.status(404).json({ error: "Producto no encontrado" });
-    }
-
-    res.status(200).json({
-      message: "Producto modificado con éxito",
-      producto: productoModificado,
-    });
-  } catch (error) {
-    console.error("Error al modificar producto:", error.message);
-    res.status(500).json({ error: "Error al modificar el producto" });
-  }
-});
-
-// RUTA PARA OBTENER DATOS PERSONALES
-app.get("/datospersonales", verifyToken, async (req, res) => {
-  try {
-    const datosPersonales = await obtenerDatosPersonales(req.user.id_usuario);
-    if (!datosPersonales) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
-    }
-    res.json(datosPersonales);
-  } catch (error) {
-    res.status(500).json({ error: "Error al obtener datos personales" });
-  }
-});
-// RUTA PARA INSERTAR UN CONTACTO
+// Endpoint para recibir mensajes de contacto
 app.post("/contacto", async (req, res) => {
   console.log("Solicitud recibida en /contacto");
   const { nombre, email, mensaje } = req.body;
 
+  // Validar que se reciban todos los campos
   if (!nombre || !email || !mensaje) {
     return res.status(400).json({ error: "Todos los campos son requeridos." });
   }
 
   try {
+    // Insertar el mensaje de contacto en la base de datos
     const result = await pool.query(
       "INSERT INTO contacto (nombre, email, mensaje) VALUES ($1, $2, $3) RETURNING *",
       [nombre, email, mensaje]
     );
-    res.status(201).json(result.rows[0]);
+    res.status(201).json({
+      message: "Mensaje enviado correctamente",
+      contacto: result.rows[0],
+    });
   } catch (err) {
     console.error("Error al insertar contacto:", err);
     res.status(500).json({ error: "Error al insertar contacto." });
   }
 });
 
-// INICIAR SERVIDOR
+
+// Iniciar servidor
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
+
