@@ -99,7 +99,7 @@ const { pool } = require("./coneccion/coneccion"); // Ajusta la ruta según tu e
 const { body, validationResult } = require("express-validator"); // Importar express-validator para validación
 const { iniciarSesion } = require("./consultas/iniciarSesion"); // Importar la función de inicio de sesión
 const app = express();
-const PORT = process.env.PORT_SERVER || 5000;
+const PORT = process.env.PORT_SERVER || 3000;
 
 // Middleware para parsear JSON y habilitar CORS
 app.use(express.json());
@@ -225,6 +225,38 @@ app.post("/contacto", async (req, res) => {
   } catch (err) {
     console.error("Error al insertar contacto:", err);
     res.status(500).json({ error: "Error al insertar contacto." });
+  }
+});
+
+// RUTA PARA INSERTAR UN COMENTARIO
+app.post("/comentarios", async (req, res) => {
+  const { nombre, email, comentario } = req.body;
+  // Verifica que se hayan enviado todos los campos
+  if (!nombre || !email || !comentario) {
+    return res.status(400).json({ error: "Todos los campos son requeridos." });
+  }
+  try {
+    const result = await pool.query(
+      "INSERT INTO comentarios (nombre, email, comentario) VALUES ($1, $2, $3) RETURNING *",
+      [nombre, email, comentario]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error("Error al insertar comentario:", err);
+    res.status(500).json({ error: "Error al insertar comentario." });
+  }
+});
+
+// RUTA PARA OBTENER COMENTARIOS (solo nombre y comentario)
+app.get("/comentarios", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT nombre, comentario FROM comentarios ORDER BY fecha_envio DESC"
+    );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error("Error al obtener comentarios:", err);
+    res.status(500).json({ error: "Error al obtener comentarios." });
   }
 });
 
