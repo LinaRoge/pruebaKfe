@@ -131,6 +131,7 @@
 //VERSION N°02 DE BLOGVISTA1
 
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./Blog.css";
 
 const BlogVista1 = () => {
@@ -147,11 +148,10 @@ const BlogVista1 = () => {
 
   const fetchComentarios = async () => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL || "http://localhost:3000"}/comentarios`
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/comentarios`
       );
-      const data = await response.json();
-      setComentarios(data);
+      setComentarios(response.data);
     } catch (error) {
       console.error("Error fetching comments:", error);
     }
@@ -160,17 +160,20 @@ const BlogVista1 = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newComentario = { nombre, email, comentario };
-
+  
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL || "http://localhost:3000"}/comentarios`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newComentario),
-      });
-      if (response.ok) {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/comentarios`,
+        newComentario,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // Si la respuesta es exitosa, axios no lanzará error
+      // Puedes validar el status si lo consideras necesario, por ejemplo:
+      if (response.status === 200 || response.status === 201) {
         // Limpiamos los campos del formulario
         setComentario("");
         setNombre("");
@@ -184,6 +187,7 @@ const BlogVista1 = () => {
       console.error("Error:", error);
     }
   };
+  
 
   return (
     <div className="blog-container">
