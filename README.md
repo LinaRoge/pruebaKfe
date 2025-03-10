@@ -67,12 +67,12 @@ Para ejecutar este proyecto en tu máquina local, sigue estos pasos:
 Crea un archivo `.env` en el directorio `/backend` con las siguientes variables:
 
 ```env
-DB_HOST="dpg-cv5ee3ofnakc73es1ao0-a.oregon-postgres.render.com"
-DB_DATABASE="bazar_k_fe"
-DB_USER="bazar_k_fe_user"
-DB_PASSWORD="MOIxvkSfkw58Acoj6fU9bGHBqYsMehHD"
+DB_HOST="NOMBRE_DE_TU_HOST"
+DB_USER="TU_USUARIO_BD"
+DB_PASSWORD="TU_CLAVE_BD"
+DB_NAME="bazarkfe"
+PORT=5432  # Render inyecta la variable PORT automáticamente
 SECRET_JWT_KEY="tu_clave_secreta"
-PORT=5000  # Render inyecta la variable PORT automáticamente
 ```
 
 **Nota:**  
@@ -90,17 +90,5 @@ Crea un archivo `.env` en el directorio `/frontend` con la siguiente variable:
 VITE_API_URL=https://TU:URL_BACKEND
 DESPLIEGUE
 ```
-### Backend
 
-Crea un archivo `.env` en el directorio `/backend` con las siguientes variables:
-
-```env
-DB_HOST="NOMBRE_DE_TU_HOST"
-DB_NAME="bazar_k_fe"
-DB_USER="USUARIO_DE_TU_BD"
-DB_PASSWORD="TU_CLAVE_DE_BD"
-DB_PORT=5432
-SECRET_JWT_KEY="TU_CLAVE_SECRETA"
-  
-```
 
