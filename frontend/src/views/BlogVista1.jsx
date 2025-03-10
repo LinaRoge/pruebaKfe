@@ -148,7 +148,7 @@ const BlogVista1 = () => {
   const fetchComentarios = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/comentarios`
+        `${process.env.REACT_APP_API_URL || "http://localhost:3000"}/comentarios`
       );
       const data = await response.json();
       setComentarios(data);
@@ -162,7 +162,8 @@ const BlogVista1 = () => {
     const newComentario = { nombre, email, comentario };
 
     try {
-      const response = await fetch("http://localhost:5000/comentarios", {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL || "http://localhost:3000"}/comentarios`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
